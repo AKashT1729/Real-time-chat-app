@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    gender:{
+      type:String,
+      required:true,
+      enum:["male","female"]
+    },
     avatar: {
       type: String, // cloudinary url
       required: true,

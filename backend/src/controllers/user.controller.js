@@ -34,11 +34,11 @@ const registerUser = asyncHandler(async (req, res) => {
   //check for user creation
   //retun response
 
-  const { fullName, email, username, password } = req.body;
+  const { fullName, email, username, password,gender } = req.body;
   //console.log(fullName, email);
 
   if (
-    [fullName, email, username, password].some((field) => field?.trim() === "")
+    [fullName, email, username, password,gender].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "Please fill all the fields");
   }
@@ -49,8 +49,8 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     throw new ApiError(409, "User already exists");
   }
-
-  const avatarLocalPath = req.files?.avatar[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
+  // console.log(req.files)
+  const avatarLocalPath = req.files?.avatar?.[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Please upload an avatar");
@@ -68,6 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
     password,
     avatar: avatar,
+    gender
   });
 
   const createUser = await User.findById(user._id).select(
@@ -103,6 +104,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
+
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
     throw new ApiError(400, "Invalid password");
