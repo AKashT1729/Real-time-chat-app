@@ -49,9 +49,8 @@ const registerUser = asyncHandler(async (req, res) => {
   if (userExists) {
     throw new ApiError(409, "User already exists");
   }
-  // console.log(req.files)
-  const avatarLocalPath = req.files?.avatar[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
 
+  const avatarLocalPath = req.files?.avatar[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Please upload an avatar");
@@ -69,7 +68,6 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
     password,
     avatar: avatar,
-    coverImage: coverImage || "",
   });
 
   const createUser = await User.findById(user._id).select(
