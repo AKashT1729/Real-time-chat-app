@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import { ApiResponse } from  "../utils/apiResponse.js"
+import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 
 const generateAccessAndRefereshTokens = async (userId) => {
@@ -34,11 +34,13 @@ const registerUser = asyncHandler(async (req, res) => {
   //check for user creation
   //retun response
 
-  const { fullName, email, username, password,gender } = req.body;
+  const { fullName, email, username, password, gender } = req.body;
   //console.log(fullName, email);
 
   if (
-    [fullName, email, username, password,gender].some((field) => field?.trim() === "")
+    [fullName, email, username, password, gender].some(
+      (field) => field?.trim() === ""
+    )
   ) {
     throw new ApiError(400, "Please fill all the fields");
   }
@@ -68,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
     password,
     avatar: avatar,
-    gender
+    gender,
   });
 
   const createUser = await User.findById(user._id).select(
@@ -199,6 +201,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   const user = await User.findById(req.user?._id);
+
   const isPasswordCorrect = await isPasswordCorrect(oldPassword);
   if (!isPasswordCorrect) {
     throw new ApiError(400, "Invalid old password");
@@ -258,15 +261,40 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Avatar updated successfully"));
 });
 
+const getUserBySearch = asyncHandler(async (req, res) => {
+  try {
+    const search = req.query.search || "";
+    const currentUserID = req.user._id;
+    const user = await User.find({
+      $and: [
+        {
+          $or: [
+            { username: { $regex: ".*" + search + ".*", $options: "i" } },
+            { fullName: { $regex: ".*" + search + ".*", $options: "i" } },
+          ],
+        },
+        {
+          _id: { $ne: currentUserID },
+        },
+      ],
+    })
+      .select("-password")
+      .select("email");
 
+    return res.status(200).send(user);
+  } catch (error) {
+    throw new ApiError(401, error?.message);
+  }
+});
 
 export {
   registerUser,
   loginUser,
-  logOutUser, 
+  logOutUser,
   refreshAccessToken,
   getCurrentuser,
   changeCurrentPassword,
   updateAccountDetails,
   updateUserAvatar,
+  getUserBySearch,
 };
