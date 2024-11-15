@@ -282,7 +282,7 @@ const getUserBySearch = asyncHandler(async (req, res) => {
       .select("-password")
       .select("-email");
 
-    return res.status(200).send(user);
+    return res.status(200).json(new ApiResponse(200, user, "successfully"));
   } catch (error) {
     throw new ApiError(401, error?.message);
   }
@@ -304,7 +304,7 @@ const getCurrentChatters = asyncHandler(async (req, res) => {
         (id) => id !== currentUserID
       );
       return [...ids, ...otherParticipants];
-    },[]);
+    }, []);
     const otherParticipantsIDS = participantsIDs.filter(
       (id) => id.toString() !== currentUserID.toString()
     );
