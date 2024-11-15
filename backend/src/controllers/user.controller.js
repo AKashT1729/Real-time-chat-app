@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import Conversation from "../models/conversation.models.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -279,9 +280,44 @@ const getUserBySearch = asyncHandler(async (req, res) => {
       ],
     })
       .select("-password")
-      .select("email");
+      .select("-email");
 
     return res.status(200).send(user);
+  } catch (error) {
+    throw new ApiError(401, error?.message);
+  }
+});
+
+const getCurrentChatters = asyncHandler(async (req, res) => {
+  try {
+    const currentUserID = req.user._id;
+    const currentChatters = await Conversation.find({
+      participants: currentUserID,
+    }).sort({
+      updatedAt: -1,
+    });
+    if (!currentChatters || currentChatters.length === 0)
+      return res.status(200).send([]);
+
+    const participantsIDs = currentChatters.reduce((ids, conversation) => {
+      const otherParticipants = conversation.participants.filter(
+        (id) => id !== currentUserID
+      );
+      return [...ids, ...otherParticipants];
+    },[]);
+    const otherParticipantsIDS = participantsIDs.filter(
+      (id) => id.toString() !== currentUserID.toString()
+    );
+    const user = await User.find({ _id: { $in: otherParticipantsIDS } })
+      .select("-password")
+      .select("-email")
+      .select("-gender");
+
+    const users = otherParticipantsIDS.map((id) =>
+      user.find((user) => user._id.toString() === id.toString())
+    );
+
+    return res.status(200).json(new ApiResponse(200, users, "successfully"));
   } catch (error) {
     throw new ApiError(401, error?.message);
   }
@@ -297,4 +333,5 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   getUserBySearch,
+  getCurrentChatters,
 };
