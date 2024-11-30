@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import axios from 'axios'
 
 const Register = () => {
   const {
@@ -10,8 +11,34 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Register data: - ", data);
+  const onSubmit = async (data) => {
+    
+    try {
+      const formData = new FormData()
+      Object.keys(data).forEach((key) => {
+        if (key === "avatar") {
+          // Handle file input separately
+          formData.append(key, data[key][0]);
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      const response = await axios.post("http://localhost:8000/api/v1/users/register",formData,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      alert('Registration successful!');
+      
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        // Handle user already exists error
+        alert("User already exists. Please try a different email or username.");
+      } else {
+        console.error("Error submitting the form:", error);
+        alert("Failed to register. Please try again.");
+      }
+    }
   };
   return (
     <div className="relative w-screen h-dvh overflow-auto">

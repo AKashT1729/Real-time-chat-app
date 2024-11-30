@@ -36,8 +36,6 @@ const registerUser = asyncHandler(async (req, res) => {
   //retun response
 
   const { fullName, email, username, password, gender } = req.body;
-  //console.log(fullName, email);
-
   if (
     [fullName, email, username, password, gender].some(
       (field) => field?.trim() === ""
@@ -55,12 +53,13 @@ const registerUser = asyncHandler(async (req, res) => {
   // console.log(req.files)
   const avatarLocalPath = req.files?.avatar?.[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
 
+
   if (!avatarLocalPath) {
     throw new ApiError(400, "Please upload an avatar");
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-  // console.log(avatar);
+   console.log(avatar);
   if (!avatar) {
     throw new ApiError(400, "Please upload an avatar");
   }
