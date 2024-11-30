@@ -1,24 +1,40 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 const Register = () => {
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log("Register data: - ", data);
+  };
   return (
-    <div className="relative w-screen h-screen">
-      {/* Left Side Welcome Text with Animation */}
-      <div className="absolute left-20 top-1/2 transform -translate-y-1/2 text-gray-200 opacity-80 z-10">
-        <h1 className="text-5xl font-extrabold mb-4 animate-typing overflow-hidden whitespace-nowrap border-r-4 pr-2">
-          Create Account.............
+    <div className="relative w-screen h-dvh overflow-auto">
+      {/* Left Side Welcome Text */}
+      <div className="absolute left-5 md:left-20 top-1/2 transform -translate-y-1/2 text-gray-800 opacity-90 z-10 px-4 md:px-0">
+        <h1 className="text-3xl md:text-5xl font-extrabold mb-4 animate-typing overflow-hidden whitespace-nowrap border-r-4 pr-2">
+          Create Account...
         </h1>
-        <p className="text-lg animate-fade">
-          Join our community! Register to start exploring, connecting, <br /> and enjoying all the features we have to offer.
+        <p className="text-sm md:text-lg">
+          Join our community! Register to start exploring, connecting, <br />
+          and enjoying all the features we have to offer.
         </p>
       </div>
 
       {/* Register Form */}
-      <div className="absolute h-fit top-1/2 right-28 w-1/3 transform -translate-y-1/2 bg-white/30 backdrop-blur-xl p-10 rounded-2xl shadow-2xl z-20">
-        <h1 className="text-2xl font-extrabold text-center mb-6 text-gray-900">
+      <div className="absolute  top-96 right-4 md:right-20 transform -translate-y-1/2 w-11/12 sm:w-2/3 md:w-1/2 lg:w-1/3 bg-white/30 backdrop-blur-lg p-4 md:p-8 rounded-xl shadow-2xl z-20">
+        <h1 className="text-xl md:text-3xl font-extrabold text-center mb-6 text-gray-900">
           Register
         </h1>
-        <form className="flex flex-col space-y-2">
+        <form
+          className="flex flex-col space-y-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           {/* Full Name */}
           <div>
             <label
@@ -30,10 +46,15 @@ const Register = () => {
             <input
               id="fullName"
               type="text"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Enter your full name"
-              required
+              {...register("fullName", { required: "Enter Full Name" })}
             />
+            {errors.fullName && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.fullName.message}
+              </p>
+            )}
           </div>
 
           {/* Username */}
@@ -47,10 +68,15 @@ const Register = () => {
             <input
               id="username"
               type="text"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Choose a username"
-              required
+              {...register("username", { required: "Username is required" })}
             />
+            {errors.username && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.username.message}
+              </p>
+            )}
           </div>
 
           {/* Email */}
@@ -64,10 +90,15 @@ const Register = () => {
             <input
               id="email"
               type="email"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Enter your email"
-              required
+              {...register("email", { required: "Email is required" })}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -81,10 +112,15 @@ const Register = () => {
             <input
               id="password"
               type="password"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Choose a password"
-              required
+              {...register("password", { required: "Password is required" })}
             />
+            {errors.password && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -98,10 +134,19 @@ const Register = () => {
             <input
               id="confirmPassword"
               type="password"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Confirm your password"
-              required
+              {...register("confirmPassword", {
+                required: "Confirm Password is required",
+                validate: (value) =>
+                  value === watch("password") || "Password do not match",
+              })}
             />
+            {errors.confirmPassword && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {/* Avatar */}
@@ -116,8 +161,16 @@ const Register = () => {
               id="avatar"
               type="file"
               accept="image/*"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              {...register("avatar", {
+                required: "Avatar is required",
+              })}
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
+            {errors.avatar && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.avatar.message}
+              </p>
+            )}
           </div>
 
           {/* Gender */}
@@ -130,13 +183,18 @@ const Register = () => {
             </label>
             <select
               id="gender"
-              className="mt-2 block w-full px-5 py-1 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              required
+              className="mt-1 block w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              {...register("gender", { required: "Gender is required" })}
             >
               <option value="">Select your gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+            {errors.gender && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.gender.message}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -147,11 +205,14 @@ const Register = () => {
             Register
           </button>
         </form>
-        <p className="text-sm text-center mt-6 text-gray-800">
+        <p className="text-sm text-center mt-4 text-gray-800">
           Already have an account?{" "}
-          <a href="#" className="text-red-500 font-medium hover:underline">
+          <Link
+            to="/login"
+            className="text-red-500 font-medium hover:underline"
+          >
             Log In
-          </a>
+          </Link>
         </p>
       </div>
     </div>
