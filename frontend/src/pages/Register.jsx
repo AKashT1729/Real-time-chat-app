@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import axios from 'axios'
+import axios from "axios";
 
 const Register = () => {
   const {
@@ -12,9 +12,8 @@ const Register = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       Object.keys(data).forEach((key) => {
         if (key === "avatar") {
           // Handle file input separately
@@ -23,13 +22,16 @@ const Register = () => {
           formData.append(key, data[key]);
         }
       });
-      const response = await axios.post("http://localhost:8000/api/v1/users/register",formData,{
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      alert('Registration successful!');
-      
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/users/register",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("Registration successful!");
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // Handle user already exists error

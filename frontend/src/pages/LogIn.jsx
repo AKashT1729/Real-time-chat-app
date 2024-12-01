@@ -8,8 +8,12 @@ const LogIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => {
-    console.log("Form data: - ",data);
+  const onSubmit = async (data) => {
+    try {
+      
+    } catch (error) {
+      
+    }
   };
   return (
     <div className="relative w-screen h-screen">
