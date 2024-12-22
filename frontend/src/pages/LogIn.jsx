@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { URL } from "../utils/Url";
 
 const LogIn = () => {
   const {
@@ -10,8 +12,17 @@ const LogIn = () => {
   } = useForm();
   const onSubmit = async (data) => {
     try {
+      const response = await axios.post(`${URL}/users/login`,data)
+      console.log(response.data);
+      
       
     } catch (error) {
+      if (error.response && error.response.status === 404) {
+        alert("User not exists. Please try a different email or username.");
+      } else {
+        console.error("Error while LogIn :", error)
+        alert("Failed to LogIn. Please try again.");
+      }
       
     }
   };

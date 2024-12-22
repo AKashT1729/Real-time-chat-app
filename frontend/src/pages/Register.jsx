@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { URL } from "../utils/Url";
 
 const Register = () => {
   const {
@@ -23,7 +24,7 @@ const Register = () => {
         }
       });
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/register",
+        `${URL}/users/register`,
         formData,
         {
           headers: {

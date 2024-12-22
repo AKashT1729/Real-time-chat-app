@@ -7,8 +7,8 @@ function App() {
     <>
       <div className="relative w-screen h-screen overflow-hidden">
            
-         <Register/>
-        
+         {/* <Register/> */}
+        <LogIn/>        
       </div>
     </>
   );
