@@ -1,40 +1,45 @@
-// Define Cloudinary configuration using environment variables
-// Import necessary modules
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-// Configure Cloudinary with environment variables
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NANE, // Cloud name from environment variables
-  api_key: process.env.API_KEY_CLOUDINARY, // API key from environment variables
-  api_secret: process.env.API_SECRET_CLOUDINARY, // API secret from environment variables
+  cloud_name: process.env.CLOUD_NANE, 
+  api_key: process.env.API_KEY_CLOUDINARY, 
+  api_secret: process.env.API_SECRET_CLOUDINARY,
 });
 
-// Define an asynchronous function to upload files to Cloudinary
 const uploadOnCloudinary = async (localFilePath) => {
+  if (!localFilePath || !fs.existsSync(localFilePath)) {
+    console.error("File path is invalid or does not exist:", localFilePath);
+    return null;
+  }
+
   try {
-    // Check if localFilePath is provided
-    console.log(localFilePath);
-    
-    if (!localFilePath) return null;
-
-    // Upload the file to Cloudinary and get the upload result
-
     const uploadResult = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto", // Resource type for upload (auto-detect)
+      resource_type: "auto",
     });
 
-    // Log the upload success and return the uploaded file URL
-    console.log("File uploaded on Cloudinary: ", uploadResult.url);
-    fs.unlinkSync(localFilePath)
+    console.log("File uploaded successfully:", uploadResult.url);
+
+    // Cleanup the local file
+    try {
+      fs.unlinkSync(localFilePath);
+    } catch (unlinkError) {
+      console.warn("Failed to remove local file:", unlinkError.message);
+    }
+
     return uploadResult.url;
   } catch (error) {
-    // Handle upload errors
-    fs.unlinkSync(localFilePath); // Remove the locally saved temporary file as the upload failed
-    console.log(error);
-    return null; // Return null in case of upload failure
+    console.error("Error during Cloudinary upload:", error.message);
+
+    // Attempt to clean up local file in case of upload failure
+    try {
+      fs.unlinkSync(localFilePath);
+    } catch (unlinkError) {
+      console.warn("Failed to remove local file after error:", unlinkError.message);
+    }
+
+    return null;
   }
 };
 
-// Export the uploadOnCloudinary function as the default export
-export { uploadOnCloudinary};
+export { uploadOnCloudinary };
