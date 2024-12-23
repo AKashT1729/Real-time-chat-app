@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-   console.log(avatar);
+   console.log("avatar retun UserControler",avatar);
   if (!avatar) {
     throw new ApiError(400, "Please upload an avatar");
   }

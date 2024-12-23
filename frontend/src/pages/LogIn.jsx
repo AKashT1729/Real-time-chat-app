@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { URL } from "../utils/Url";
 
 const LogIn = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -12,18 +13,21 @@ const LogIn = () => {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`${URL}/users/login`,data)
+      const response = await axios.post(`${URL}/users/login`, data, {
+        withCredentials: true,
+      });
       console.log(response.data);
-      
-      
+      if (!response.data.success) {
+        return
+      } 
+      navigate("/chatdashboard");
     } catch (error) {
       if (error.response && error.response.status === 404) {
         alert("User not exists. Please try a different email or username.");
       } else {
-        console.error("Error while LogIn :", error)
-        alert("Failed to LogIn. Please try again.");
+        console.error("Error while LogIn :", error);
+        alert("UserName or Password Invalid. Please try again.");
       }
-      
     }
   };
   return (
@@ -62,10 +66,12 @@ const LogIn = () => {
               type="text"
               className="mt-1 block w-full px-4 md:px-5 py-2 md:py-3 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Enter your username"
-              {...register('username',{required:'Username is required'})}
+              {...register("username", { required: "Username is required" })}
             />
             {errors.username && (
-              <p className="text-red-600 text-sm mt-1">{errors.username.message}</p>
+              <p className="text-red-600 text-sm mt-1">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -82,10 +88,12 @@ const LogIn = () => {
               type="password"
               className="mt-1 block w-full px-4 md:px-5 py-2 md:py-3 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               placeholder="Enter your password"
-              {...register('password',{required:'Password is required'})}
+              {...register("password", { required: "Password is required" })}
             />
             {errors.password && (
-              <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
+              <p className="text-red-600 text-sm mt-1">
+                {errors.password.message}
+              </p>
             )}
           </div>
 

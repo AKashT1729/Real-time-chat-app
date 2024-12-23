@@ -14,7 +14,7 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     // Check if localFilePath is provided
-   // console.log(localFilePath);
+    console.log(localFilePath);
     
     if (!localFilePath) return null;
 
@@ -25,7 +25,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     });
 
     // Log the upload success and return the uploaded file URL
-   // console.log("File uploaded on Cloudinary: ", uploadResult.url);
+    console.log("File uploaded on Cloudinary: ", uploadResult.url);
     fs.unlinkSync(localFilePath)
     return uploadResult.url;
   } catch (error) {
