@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { URL } from "../utils/Url";
+import { useAuth } from "../context/AuthContext";
 
 const LogIn = () => {
   const navigate = useNavigate();
+  const {setAuthUser} = useAuth()
   const {
     register,
     handleSubmit,
@@ -17,9 +19,13 @@ const LogIn = () => {
         withCredentials: true,
       });
       console.log(response.data);
+
       if (!response.data.success) {
-        return
-      } 
+        return;
+      }
+      const userData = response.data.data.user;
+      localStorage.setItem("chatApp", JSON.stringify(userData));
+      setAuthUser(userData)
       navigate("/chatdashboard");
     } catch (error) {
       if (error.response && error.response.status === 404) {

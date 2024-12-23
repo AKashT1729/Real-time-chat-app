@@ -1,10 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { URL } from "../utils/Url";
 
 const Register = () => {
+  const navigate = useNavigate();
   const {
     register,
     watch,
@@ -23,16 +24,13 @@ const Register = () => {
           formData.append(key, data[key]);
         }
       });
-      const response = await axios.post(
-        `${URL}/users/register`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${URL}/users/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("Registration successful!");
+      navigate("/login");
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // Handle user already exists error
