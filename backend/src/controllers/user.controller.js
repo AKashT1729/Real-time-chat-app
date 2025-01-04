@@ -53,13 +53,12 @@ const registerUser = asyncHandler(async (req, res) => {
   // console.log(req.files)
   const avatarLocalPath = req.files?.avatar?.[0]?.path; //ensures that if req.files is null or undefined, the code doesn't throw an error but instead returns undefined
 
-
   if (!avatarLocalPath) {
     throw new ApiError(400, "Please upload an avatar");
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-   console.log("avatar return UserController",avatar);
+  console.log("avatar return UserController", avatar);
   if (!avatar) {
     throw new ApiError(400, "Please upload an avatar");
   }
